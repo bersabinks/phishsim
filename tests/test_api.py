@@ -129,6 +129,66 @@ def test_export_pdf_not_found(client):
     assert res.status_code == 404
 
 
+def _make_campaign(client, name="C"):
+    res = client.post(
+        "/api/campaigns",
+        data={"name": name, "scenario": "s", "period": "p", "objective": "o"},
+    )
+    return res.json()["id"]
+
+
+def test_compare_valid(client):
+    """Comparaison valide : 200, structure JSON correcte, aucun jeton."""
+    cid_a = _make_campaign(client, "Alpha")
+    cid_b = _make_campaign(client, "Beta")
+
+    # Enregistre un clic dans la campagne A pour avoir des indicateurs non nuls.
+    token = client.post(
+        f"/api/campaigns/{cid_a}/participants", data={"alias": "p1"}
+    ).json()["token"]
+    client.post("/api/events", data={"token": token, "event_type": "clic"})
+
+    res = client.get(f"/api/compare?campaign_a={cid_a}&campaign_b={cid_b}")
+    assert res.status_code == 200
+
+    body = res.json()
+    assert set(body) == {"campaign_a", "campaign_b"}
+    for key in ("campaign_a", "campaign_b"):
+        c = body[key]
+        for field in (
+            "id", "name", "participants_total",
+            "clics", "signalements", "taux_clic", "taux_signalement",
+        ):
+            assert field in c, f"champ manquant : {field} dans {key}"
+
+    assert body["campaign_a"]["name"] == "Alpha"
+    assert body["campaign_b"]["name"] == "Beta"
+    assert body["campaign_a"]["clics"] == 1
+    assert body["campaign_b"]["clics"] == 0
+    # Aucun jeton ne doit apparaître dans la réponse.
+    assert "sim_" not in str(body)
+
+
+def test_compare_not_found_a(client):
+    """Campagne A inexistante → 404."""
+    cid_b = _make_campaign(client, "Existe")
+    res = client.get(f"/api/compare?campaign_a=9999&campaign_b={cid_b}")
+    assert res.status_code == 404
+
+
+def test_compare_not_found_b(client):
+    """Campagne B inexistante → 404."""
+    cid_a = _make_campaign(client, "Existe")
+    res = client.get(f"/api/compare?campaign_a={cid_a}&campaign_b=9999")
+    assert res.status_code == 404
+
+
+def test_compare_page(client):
+    """La page /compare doit renvoyer 200."""
+    res = client.get("/compare")
+    assert res.status_code == 200
+
+
 def test_conseils_page(client):
     """La page /conseils doit être accessible et renvoyer du HTML."""
     res = client.get("/conseils")

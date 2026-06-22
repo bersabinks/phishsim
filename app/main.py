@@ -172,6 +172,30 @@ def api_results(campaign_id: int, db=Depends(get_db)):
     return services.aggregate_results(db, campaign_id)
 
 
+@app.get("/api/compare", tags=["campagnes"])
+def api_compare(campaign_a: int, campaign_b: int, db=Depends(get_db)):
+    """Indicateurs agrégés de deux campagnes côte à côte.
+
+    Aucune donnée nominative ni jeton n'est inclus dans la réponse.
+    """
+    camp_a = services.get_campaign(db, campaign_a)
+    if camp_a is None:
+        raise HTTPException(
+            status_code=404, detail=f"Campagne {campaign_a} introuvable."
+        )
+    camp_b = services.get_campaign(db, campaign_b)
+    if camp_b is None:
+        raise HTTPException(
+            status_code=404, detail=f"Campagne {campaign_b} introuvable."
+        )
+    results_a = services.aggregate_results(db, campaign_a)
+    results_b = services.aggregate_results(db, campaign_b)
+    return {
+        "campaign_a": {"id": camp_a["id"], "name": camp_a["name"], **results_a},
+        "campaign_b": {"id": camp_b["id"], "name": camp_b["name"], **results_b},
+    }
+
+
 @app.get("/api/campaigns/{campaign_id}/export", tags=["simulation"])
 def api_export_pdf(campaign_id: int, db=Depends(get_db)):
     """Génère un rapport PDF des indicateurs agrégés.
@@ -192,6 +216,14 @@ def api_export_pdf(campaign_id: int, db=Depends(get_db)):
 
 
 # --- Pages HTML -------------------------------------------------------------
+
+@app.get("/compare", response_class=HTMLResponse, tags=["pages"])
+def page_compare(request: Request, db=Depends(get_db)):
+    campaigns = [dict(row) for row in services.list_campaigns(db)]
+    return templates.TemplateResponse(
+        request, "compare.html", {"campaigns": campaigns}
+    )
+
 
 @app.get("/conseils", response_class=HTMLResponse, tags=["pages"])
 def page_conseils(request: Request):

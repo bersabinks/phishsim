@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comparaison de campagnes</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Comparaison de campagnes</h1>
+    <p class="subtitle">Indicateurs agrégés côte à côte — sans donnée nominative</p>
+    <nav class="header-nav">
+      <a href="/">← Tableau de bord</a>
+      <a href="/conseils">Bonnes pratiques</a>
+    </nav>
+  </header>
+
+  <main>
+    {% if campaigns | length < 2 %}
+    <section class="card">
+      <p class="hint">Il faut au moins deux campagnes pour effectuer une comparaison.
+        <a href="/">Créer des campagnes →</a></p>
+    </section>
+    {% else %}
+    <section class="card">
+      <h2>Sélectionner les campagnes</h2>
+      <form id="compare-form">
+        <label>Campagne A
+          <select name="campaign_a" required>
+            {% for c in campaigns %}
+            <option value="{{ c.id }}">{{ c.name }} (#{{ c.id }})</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>Campagne B
+          <select name="campaign_b" required>
+            {% for c in campaigns %}
+            <option value="{{ c.id }}" {% if loop.index == 2 %}selected{% endif %}>{{ c.name }} (#{{ c.id }})</option>
+            {% endfor %}
+          </select>
+        </label>
+        <button type="submit">Comparer</button>
+      </form>
+      <p id="compare-msg" class="msg"></p>
+    </section>
+
+    <section class="card hidden" id="results-section">
+      <h2>Résultats <span class="hint">(aucune donnée nominative)</span></h2>
+      <div class="compare-grid" id="compare-grid"></div>
+    </section>
+    {% endif %}
+  </main>
+
+  <footer>
+    <p>Document étudiant — Mastère ESI. Aucun courriel réel n'est envoyé.
+       <a href="/health">/health</a> · <a href="/docs">API</a></p>
+  </footer>
+
+  <script src="/static/compare.js"></script>
+</body>
+</html>

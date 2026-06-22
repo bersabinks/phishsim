@@ -27,7 +27,7 @@ header {
 }
 header h1 { margin: 0; font-size: 1.4rem; }
 .subtitle { margin: .25rem 0 0; opacity: .85; font-size: .9rem; }
-.header-nav { margin-top: .6rem; }
+.header-nav { margin-top: .6rem; display: flex; gap: 1.25rem; flex-wrap: wrap; }
 .header-nav a { color: #fff; font-size: .85rem; opacity: .9; text-decoration: underline; }
 .header-nav a:hover { opacity: 1; }
 
@@ -88,6 +88,24 @@ th { color: var(--muted); font-weight: 600; }
 .metric .label { font-size: .75rem; color: var(--muted); }
 
 .btn-row { display: flex; gap: .6rem; flex-wrap: wrap; }
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+@media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+.compare-col { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+.compare-col h3 { margin: 0 0 .75rem; font-size: 1rem; color: var(--ink); }
+
+select {
+  padding: .5rem .6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: .95rem;
+  background: #fff;
+}
 
 footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 1.5rem; }
 footer a { color: var(--accent); }
