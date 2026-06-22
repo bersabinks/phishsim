@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulation pédagogique</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="sim-body">
+  <main class="sim-card">
+    {% if not valid %}
+      <h1>Lien invalide</h1>
+      <p>Ce lien de simulation n'est pas reconnu. Aucune action n'a été enregistrée.</p>
+    {% elif expired %}
+      <h1>Lien expiré</h1>
+      <p>Cette simulation n'est plus active. Aucune donnée n'est collectée.</p>
+    {% else %}
+      <h1>⚠️ Ceci était une simulation de phishing</h1>
+      <p class="lead">
+        Si ce message avait été un vrai courriel malveillant, cliquer aurait pu
+        compromettre vos données. <strong>Aucun identifiant n'est demandé ici</strong>
+        et aucune information personnelle n'est collectée.
+      </p>
+
+      <div class="advice">
+        <h2>Comment reconnaître un phishing ?</h2>
+        <ul>
+          <li>Vérifiez l'adresse de l'expéditeur, pas seulement le nom affiché.</li>
+          <li>Méfiez-vous de l'urgence et des menaces (« compte bloqué »).</li>
+          <li>Survolez les liens avant de cliquer pour voir la vraie destination.</li>
+          <li>Ne saisissez jamais vos identifiants depuis un lien reçu par courriel.</li>
+        </ul>
+      </div>
+
+      <p class="hint">
+        Cette page enregistre uniquement un événement anonyme (lié à un jeton non
+        sensible) à des fins pédagogiques agrégées.
+      </p>
+
+      <div class="sim-actions">
+        <button id="btn-clic" data-token="{{ token }}" data-type="clic">
+          J'ai compris (enregistrer la visite)
+        </button>
+        <button id="btn-signalement" data-token="{{ token }}" data-type="signalement" class="secondary">
+          J'aurais signalé ce message
+        </button>
+      </div>
+      <p id="sim-msg" class="msg"></p>
+    {% endif %}
+  </main>
+
+  <script src="/static/simulation.js"></script>
+</body>
+</html>

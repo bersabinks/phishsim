@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestionnaire de campagnes de sensibilisation</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Sensibilisation au phishing</h1>
+    <p class="subtitle">Simulations pédagogiques — sans envoi réel, sans collecte d'identifiants</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>1. Créer une campagne</h2>
+      <form id="campaign-form">
+        <label>Nom <input name="name" required maxlength="120" placeholder="Sensibilisation Q1"></label>
+        <label>Scénario <input name="scenario" required placeholder="Fausse facture fournisseur"></label>
+        <label>Période <input name="period" required placeholder="2026-07-01 → 2026-07-15"></label>
+        <label>Objectif <input name="objective" required placeholder="Mesurer le taux de signalement"></label>
+        <button type="submit">Créer (statut Brouillon)</button>
+      </form>
+      <p id="campaign-msg" class="msg"></p>
+    </section>
+
+    <section class="card">
+      <h2>2. Campagnes existantes</h2>
+      <table id="campaigns-table">
+        <thead>
+          <tr><th>ID</th><th>Nom</th><th>Statut</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          {% for c in campaigns %}
+          <tr data-id="{{ c.id }}">
+            <td>{{ c.id }}</td>
+            <td>{{ c.name }}</td>
+            <td>{{ c.status }}</td>
+            <td><button class="select-btn" data-id="{{ c.id }}" data-name="{{ c.name }}">Gérer</button></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card hidden" id="manage-section">
+      <h2>3. Gérer : <span id="manage-name"></span></h2>
+
+      <h3>Ajouter un participant fictif</h3>
+      <form id="participant-form">
+        <label>Alias fictif <input name="alias" required placeholder="participant_01"></label>
+        <button type="submit">Ajouter + générer le jeton</button>
+      </form>
+      <p id="participant-msg" class="msg"></p>
+
+      <h3>Importer par CSV</h3>
+      <p class="hint">Une colonne « alias ». Les e-mails réels sont refusés.</p>
+      <form id="import-form">
+        <input type="file" name="file" accept=".csv,text/csv" required>
+        <button type="submit">Importer</button>
+      </form>
+      <p id="import-msg" class="msg"></p>
+
+      <h3>Participants &amp; jetons de simulation</h3>
+      <table id="participants-table">
+        <thead><tr><th>Alias</th><th>Lien de simulation</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>4. Résultats agrégés <span class="hint">(aucun classement nominatif)</span></h3>
+      <button id="refresh-results">Rafraîchir les indicateurs</button>
+      <div id="results" class="results"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Document étudiant — Mastère ESI. Aucun courriel réel n'est envoyé.
+       <a href="/health">/health</a> · <a href="/docs">API</a></p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

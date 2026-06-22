@@ -1,0 +1,18 @@
+# Configuration gitleaks (recherche de secrets).
+# Utilise les règles par défaut et ajoute une tolérance pour les jetons
+# de simulation, qui sont NON sensibles par conception (préfixe "sim_").
+
+title = "Configuration gitleaks - phishsim"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Jetons de simulation non sensibles et données de démonstration"
+regexes = [
+  '''sim_[A-Za-z0-9_-]{16,}''',
+]
+paths = [
+  '''tests/.*''',
+  '''docs/.*''',
+]

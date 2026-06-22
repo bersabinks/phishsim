@@ -1,0 +1,17 @@
+[project]
+name = "phishsim"
+version = "1.0.0"
+description = "Gestionnaire de campagnes de sensibilisation au phishing (simulations pédagogiques)"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 90
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+ignore = ["B008"]  # FastAPI utilise des appels dans les valeurs par défaut (Depends/Form).
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

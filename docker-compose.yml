@@ -1,0 +1,18 @@
+services:
+  phishsim:
+    build: .
+    container_name: phishsim
+    ports:
+      - "8000:8000"
+    environment:
+      # Configuration externalisée (aucune valeur sensible).
+      PHISHSIM_TOKEN_TTL_HOURS: "72"
+      PHISHSIM_MAX_IMPORT_ROWS: "500"
+      PHISHSIM_DEBUG: "false"
+    volumes:
+      # Persiste la base SQLite hors du conteneur.
+      - phishsim-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  phishsim-data:

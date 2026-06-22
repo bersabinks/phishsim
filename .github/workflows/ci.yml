@@ -1,0 +1,77 @@
+name: CI
+
+# Pipeline d'intégration continue.
+# Couvre les exigences DevOps du cahier des charges :
+#   - lint (qualité)
+#   - tests essentiels
+#   - analyse de dépendances (pip-audit)
+#   - recherche de secrets (gitleaks)
+#   - build de l'image Docker (reproductibilité)
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  quality:
+    name: Lint et tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer les dépendances
+        run: pip install -r requirements-dev.txt
+
+      - name: Lint (ruff)
+        run: ruff check app tests
+
+      - name: Tests (pytest)
+        run: pytest -q
+
+  dependencies:
+    name: Analyse de dépendances
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Installer pip-audit
+        run: pip install pip-audit==2.8.0
+      - name: Auditer les vulnérabilités connues
+        run: pip-audit -r requirements.txt
+
+  secrets:
+    name: Recherche de secrets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scanner les secrets (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  docker:
+    name: Build Docker
+    runs-on: ubuntu-latest
+    needs: [ quality ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construire l'image
+        run: docker build -t phishsim:ci .
+      - name: Vérifier le démarrage et le healthcheck
+        run: |
+          docker run -d --name phishsim_ci -p 8000:8000 phishsim:ci
+          sleep 8
+          curl -sf http://127.0.0.1:8000/health
+          docker rm -f phishsim_ci
