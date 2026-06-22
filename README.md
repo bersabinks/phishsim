@@ -70,9 +70,14 @@ uvicorn app.main:app --reload
    s'affiche, sans aucun champ d'identifiant.
 5. Cliquer sur les boutons pour enregistrer des **événements anonymes**.
 6. Revenir au tableau de bord et **rafraîchir les indicateurs agrégés**.
+7. Cliquer **Exporter PDF** pour télécharger un rapport des indicateurs (sans donnée
+   nominative ni jeton) via `GET /api/campaigns/{id}/export`.
+8. Ouvrir <http://localhost:8000/compare> pour **comparer deux campagnes** côte à
+   côte via `GET /api/compare?campaign_a={id}&campaign_b={id}`.
+9. Consulter <http://localhost:8000/conseils> pour la **bibliothèque de bonnes
+   pratiques anti-phishing** (contenu statique).
 
-Le scénario complet (créer une campagne, importer cinq participants, jouer deux
-parcours, afficher les résultats) est couvert par les tests d'intégration.
+Le scénario complet est couvert par 29 tests d'intégration (`pytest -q`).
 
 ---
 
@@ -127,12 +132,12 @@ Composants : voir [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 ```bash
 pip install -r requirements-dev.txt
 ruff check app tests      # lint
-pytest -q                 # tests unitaires + intégration
+pytest -q                 # 29 tests unitaires + intégration
 ```
 
 La CI (GitHub Actions, `.github/workflows/ci.yml`) exécute : lint, tests,
-analyse de dépendances (`pip-audit`), recherche de secrets (`gitleaks`) et build
-de l'image Docker avec vérification du healthcheck.
+analyse de dépendances (`pip-audit` — 0 CVE), recherche de secrets (`gitleaks`) et
+build de l'image Docker avec vérification du healthcheck.
 
 ---
 
@@ -141,8 +146,10 @@ de l'image Docker avec vérification du healthcheck.
 - Pas d'authentification ni de gestion multi-utilisateurs (hors périmètre).
 - SQLite : adapté à la démonstration, pas à une forte charge concurrente.
 - Pas d'envoi de courriel (volontaire et définitif).
-- Les extensions (bibliothèque de conseils, comparaison de campagnes, export PDF,
-  expiration automatique des jetons) ne sont pas incluses dans le MVP.
+- L'expiration automatique des jetons est configurable mais non déclenchée
+  automatiquement (pas de tâche de fond dans le périmètre).
+- Les extensions post-MVP livrées : page `/conseils`, export PDF agrégé,
+  comparaison de campagnes.
 
 ---
 

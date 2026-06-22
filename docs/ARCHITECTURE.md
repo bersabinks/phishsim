@@ -9,12 +9,13 @@ Goal (incrément démontrable et reproductible en 15 heures).
 ```
 ┌────────────────────────────────────────────────────────┐
 │                      Navigateur                         │
-│  dashboard.html / simulation.html + JS (fetch API)      │
+│  dashboard · simulation · conseils · compare + JS       │
 └───────────────────────────┬────────────────────────────┘
                             │ HTTP (JSON / formulaires)
 ┌───────────────────────────▼────────────────────────────┐
 │                    FastAPI (app/main.py)                │
-│  • Routes API et pages HTML                             │
+│  • Routes API + pages HTML (dashboard, conseils,        │
+│    compare, simulation, export PDF)                     │
 │  • Middleware en-têtes de sécurité (CSP, nosniff…)      │
 │  • Garde-fou « pas d'e-mail réel » (lifespan)           │
 │  • Gestion d'erreurs métier → HTTP 400 lisible          │
@@ -26,6 +27,7 @@ Goal (incrément démontrable et reproductible en 15 heures).
 │  • Génération de jetons non sensibles (secrets)         │
 │  • Import CSV contrôlé (erreurs signalées)              │
 │  • Agrégation sans classement nominatif                 │
+│  • Génération PDF agrégé sans donnée nominative (fpdf2) │
 └───────────────────────────┬────────────────────────────┘
                             │ SQL paramétré
 ┌───────────────────────────▼────────────────────────────┐
@@ -73,6 +75,23 @@ Exemple « enregistrer un clic en simulation » :
    la non-expiration du jeton, applique la règle d'unicité.
 3. **Persistance** : insertion dans `sim_events` (ou détection d'un doublon).
 
+Exemple « exporter un rapport PDF » :
+
+1. **Interface** : bouton « Exporter PDF » déclenche `GET /api/campaigns/{id}/export`.
+2. **Logique** : `services.aggregate_results` calcule les indicateurs ; `services.generate_pdf_report`
+   construit le PDF avec `fpdf2` — seuls les compteurs et taux globaux lui sont transmis,
+   sans alias ni jeton.
+3. **Réponse** : `Response(content=bytes, media_type="application/pdf")` téléchargeable
+   par le navigateur.
+
+Exemple « comparer deux campagnes » :
+
+1. **Interface** : `GET /api/compare?campaign_a={a}&campaign_b={b}` depuis `compare.js`.
+2. **Logique** : `services.aggregate_results` appelé deux fois ; la réponse JSON
+   ne contient que `id`, `name` et les indicateurs agrégés de chaque campagne.
+3. **Affichage** : rendu côté client en deux colonnes `.compare-col` avec les
+   classes `.metric` existantes.
+
 ## 4. Choix techniques et justifications
 
 | Choix | Justification |
@@ -82,6 +101,7 @@ Exemple « enregistrer un clic en simulation » :
 | JS sans framework | Pas de build, CSP stricte possible, surface d'attaque réduite. |
 | Jetons `secrets.token_urlsafe` | Aléa cryptographique, non devinable, non sensible. |
 | Docker + compte non privilégié | Reproductibilité et droits minimaux (DoD sécurité). |
+| fpdf2 | Génération PDF pure Python (licence MIT), sans dépendance système ; garantit qu'aucune donnée nominative ni jeton n'est inclus dans l'export (seuls les indicateurs agrégés sont passés à `generate_pdf_report`). |
 
 ## 5. Sécurité (résumé)
 
