@@ -62,15 +62,26 @@ def get_db():
 
 # --- En-têtes de sécurité ---------------------------------------------------
 
+_DOCS_PATHS = {"/docs", "/redoc", "/openapi.json"}
+
+# Swagger UI charge ses assets depuis cdn.jsdelivr.net ; CSP permissif pour /docs.
+_CSP_DOCS = (
+    "default-src 'self' cdn.jsdelivr.net; "
+    "script-src 'self' cdn.jsdelivr.net 'unsafe-inline'; "
+    "style-src 'self' cdn.jsdelivr.net 'unsafe-inline'; "
+    "img-src 'self' data: cdn.jsdelivr.net"
+)
+_CSP_APP = "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:"
+
+
 @app.middleware("http")
 async def security_headers(request: Request, call_next):
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "no-referrer"
-    response.headers["Content-Security-Policy"] = (
-        "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:"
-    )
+    csp = _CSP_DOCS if request.url.path in _DOCS_PATHS else _CSP_APP
+    response.headers["Content-Security-Policy"] = csp
     return response
 
 

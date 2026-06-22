@@ -36,6 +36,27 @@ class ValidationError(ValueError):
     """Erreur métier renvoyée au client sous forme de message lisible."""
 
 
+# --- Utilitaires PDF --------------------------------------------------------
+
+_LATIN1_REPLACEMENTS = {
+    "→": "->",
+    "←": "<-",
+    "–": "-",
+    "—": "--",
+    "‘": "'",
+    "’": "'",
+    "“": '"',
+    "”": '"',
+    "…": "...",
+}
+
+
+def _to_latin1(text: str) -> str:
+    for char, replacement in _LATIN1_REPLACEMENTS.items():
+        text = text.replace(char, replacement)
+    return text.encode("latin-1", errors="replace").decode("latin-1")
+
+
 # --- Jetons -----------------------------------------------------------------
 
 def generate_token() -> str:
@@ -340,7 +361,7 @@ def generate_pdf_report(campaign: dict, results: dict) -> bytes:
     # -- Informations de la campagne --
     pdf.set_font("Helvetica", "B", 12)
     pdf.set_fill_color(244, 246, 248)
-    camp_title = f"  Campagne #{campaign['id']} - {campaign['name']}"
+    camp_title = _to_latin1(f"  Campagne #{campaign['id']} - {campaign['name']}")
     pdf.cell(0, 8, camp_title, fill=True, **_nl)
     pdf.ln(3)
 
@@ -354,7 +375,7 @@ def generate_pdf_report(campaign: dict, results: dict) -> bytes:
         pdf.set_font("Helvetica", "B", 10)
         pdf.cell(38, 6, label + " :", **_rc)
         pdf.set_font("Helvetica", "", 10)
-        pdf.cell(0, 6, value, **_nl)
+        pdf.cell(0, 6, _to_latin1(str(value)), **_nl)
     pdf.ln(6)
 
     # -- Tableau des indicateurs --
