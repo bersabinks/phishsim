@@ -125,6 +125,15 @@ if (refreshBtn) {
   });
 }
 
+// --- Export PDF ---
+const exportBtn = document.getElementById("export-pdf");
+if (exportBtn) {
+  exportBtn.addEventListener("click", () => {
+    if (!currentCampaignId) return;
+    window.location.href = `/api/campaigns/${currentCampaignId}/export`;
+  });
+}
+
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])

@@ -87,6 +87,8 @@ th { color: var(--muted); font-weight: 600; }
 .metric .value { font-size: 1.5rem; font-weight: 700; color: var(--accent-dark); }
 .metric .label { font-size: .75rem; color: var(--muted); }
 
+.btn-row { display: flex; gap: .6rem; flex-wrap: wrap; }
+
 footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 1.5rem; }
 footer a { color: var(--accent); }
 

@@ -107,6 +107,28 @@ def test_simulation_page_collects_no_credentials(client):
     assert "mot de passe" not in html or "aucun identifiant" in html
 
 
+def test_export_pdf(client):
+    """Le PDF doit être généré (200, application/pdf) sans aucun jeton."""
+    res = client.post(
+        "/api/campaigns",
+        data={"name": "Camp PDF", "scenario": "s", "period": "p", "objective": "o"},
+    )
+    cid = res.json()["id"]
+    client.post(f"/api/campaigns/{cid}/participants", data={"alias": "p1"})
+
+    res = client.get(f"/api/campaigns/{cid}/export")
+    assert res.status_code == 200
+    assert res.headers["content-type"] == "application/pdf"
+    # Aucun jeton ne doit figurer dans le document.
+    assert b"sim_" not in res.content
+
+
+def test_export_pdf_not_found(client):
+    """L'export d'une campagne inexistante renvoie 404."""
+    res = client.get("/api/campaigns/9999/export")
+    assert res.status_code == 404
+
+
 def test_conseils_page(client):
     """La page /conseils doit être accessible et renvoyer du HTML."""
     res = client.get("/conseils")

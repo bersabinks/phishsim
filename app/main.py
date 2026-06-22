@@ -16,7 +16,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Form, HTTPException, Request, UploadFile
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -170,6 +170,25 @@ def api_record_event(
 def api_results(campaign_id: int, db=Depends(get_db)):
     """Indicateurs agrégés uniquement (aucun classement nominatif)."""
     return services.aggregate_results(db, campaign_id)
+
+
+@app.get("/api/campaigns/{campaign_id}/export", tags=["simulation"])
+def api_export_pdf(campaign_id: int, db=Depends(get_db)):
+    """Génère un rapport PDF des indicateurs agrégés.
+
+    Le document ne contient aucune donnée nominative ni aucun jeton.
+    """
+    campaign = services.get_campaign(db, campaign_id)
+    if campaign is None:
+        raise HTTPException(status_code=404, detail="Campagne introuvable.")
+    results = services.aggregate_results(db, campaign_id)
+    pdf_bytes = services.generate_pdf_report(dict(campaign), results)
+    filename = f"rapport_campagne_{campaign_id}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 # --- Pages HTML -------------------------------------------------------------
