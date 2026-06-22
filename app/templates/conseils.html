@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bonnes pratiques anti-phishing</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Bonnes pratiques anti-phishing</h1>
+    <p class="subtitle">Conseils pour reconnaître et déjouer les tentatives d'hameçonnage</p>
+    <nav class="header-nav"><a href="/">← Retour au tableau de bord</a></nav>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>1. Vérifier l'expéditeur avec soin</h2>
+      <ul>
+        <li>Comparez l'adresse e-mail complète, pas seulement le nom affiché — un expéditeur peut s'appeler « Support Microsoft » tout en envoyant depuis <em>support@micros0ft-help.ru</em>.</li>
+        <li>Méfiez-vous des domaines qui imitent des marques connues par substitution de caractères (0 au lieu de o, rn au lieu de m).</li>
+        <li>En cas de doute, contactez l'expéditeur par un autre canal (téléphone, portail officiel) sans cliquer sur les liens du message.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>2. Analyser les liens avant de cliquer</h2>
+      <ul>
+        <li>Survolez chaque lien (sans cliquer) pour voir l'URL réelle dans la barre d'état de votre navigateur.</li>
+        <li>Vérifiez que le domaine principal correspond bien au site attendu : dans <code>connexion.banque.com.attaque.net</code>, le vrai domaine est <code>attaque.net</code>.</li>
+        <li>Préférez taper l'adresse du site directement dans la barre d'adresse plutôt que de suivre un lien reçu par e-mail.</li>
+        <li>Les raccourcisseurs d'URL (bit.ly, tinyurl…) peuvent masquer la destination réelle — utilisez un service de prévisualisation avant d'ouvrir.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>3. Reconnaître les signaux d'alarme dans le message</h2>
+      <ul>
+        <li><strong>Urgence artificielle</strong> : « Votre compte sera suspendu dans 24 h », « Agissez maintenant » — les attaquants cherchent à court-circuiter votre réflexion.</li>
+        <li><strong>Demande inhabituelle</strong> : votre banque, votre employeur ou l'État ne vous demanderont jamais un mot de passe ou un code par e-mail.</li>
+        <li><strong>Pièce jointe non sollicitée</strong> : n'ouvrez pas les fichiers Office, PDF ou ZIP reçus sans avoir vérifié l'expéditeur, surtout s'ils demandent d'activer des macros.</li>
+        <li><strong>Fautes d'orthographe et mise en forme douteuse</strong> : un indicateur classique, même si les messages frauduleux modernes sont de mieux en mieux rédigés.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>4. Protéger ses accès</h2>
+      <ul>
+        <li>Activez l'authentification à deux facteurs (2FA) sur tous vos comptes importants — même si un mot de passe est compromis, le second facteur bloque l'accès.</li>
+        <li>Utilisez un gestionnaire de mots de passe : il ne remplira pas automatiquement vos identifiants sur un faux site.</li>
+        <li>Ne réutilisez jamais le même mot de passe sur plusieurs services.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>5. Que faire si vous avez cliqué ?</h2>
+      <ul>
+        <li>Ne saisissez aucune information sur la page ouverte.</li>
+        <li>Fermez l'onglet immédiatement et signalez l'incident à votre équipe informatique ou à votre responsable sécurité.</li>
+        <li>Changez votre mot de passe depuis un appareil sûr si vous pensez l'avoir saisi sur un faux site.</li>
+        <li>En France, signalez le message sur <strong>signal.spam.fr</strong> et, si vous êtes victime, sur <strong>cybermalveillance.gouv.fr</strong>.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>Document étudiant — Mastère ESI. Aucun courriel réel n'est envoyé.
+       <a href="/health">/health</a> · <a href="/docs">API</a></p>
+  </footer>
+</body>
+</html>

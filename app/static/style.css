@@ -27,6 +27,9 @@ header {
 }
 header h1 { margin: 0; font-size: 1.4rem; }
 .subtitle { margin: .25rem 0 0; opacity: .85; font-size: .9rem; }
+.header-nav { margin-top: .6rem; }
+.header-nav a { color: #fff; font-size: .85rem; opacity: .9; text-decoration: underline; }
+.header-nav a:hover { opacity: 1; }
 
 main { max-width: 880px; margin: 1.5rem auto; padding: 0 1rem; }
 

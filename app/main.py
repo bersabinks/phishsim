@@ -174,6 +174,12 @@ def api_results(campaign_id: int, db=Depends(get_db)):
 
 # --- Pages HTML -------------------------------------------------------------
 
+@app.get("/conseils", response_class=HTMLResponse, tags=["pages"])
+def page_conseils(request: Request):
+    """Page statique de bonnes pratiques anti-phishing."""
+    return templates.TemplateResponse(request, "conseils.html", {})
+
+
 @app.get("/", response_class=HTMLResponse, tags=["pages"])
 def page_dashboard(request: Request, db=Depends(get_db)):
     campaigns = [dict(row) for row in services.list_campaigns(db)]

@@ -107,6 +107,13 @@ def test_simulation_page_collects_no_credentials(client):
     assert "mot de passe" not in html or "aucun identifiant" in html
 
 
+def test_conseils_page(client):
+    """La page /conseils doit être accessible et renvoyer du HTML."""
+    res = client.get("/conseils")
+    assert res.status_code == 200
+    assert "anti-phishing" in res.text.lower()
+
+
 def test_security_headers_present(client):
     res = client.get("/")
     assert res.headers.get("X-Content-Type-Options") == "nosniff"
